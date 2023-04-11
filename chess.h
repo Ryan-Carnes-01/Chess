@@ -15,15 +15,18 @@ struct Conversion_Table{
     }
 };
 struct Piece{
+    vector<pair<int,int>> valid_moves;
     pair<int,int> location;
     Team color;
     int value;
     char symbol;
+    bool firstmove;
 };
 struct Pawn: public Piece{
     Pawn(){
         value = 1;
         symbol = 'p';
+        firstmove = true;
     }
 };
 struct Bishop: public Piece{
@@ -89,13 +92,77 @@ struct Board{
         }
     }
     bool piececheck(pair<pair<int,int>,pair<int,int>> input){
-        int piece_i,piece_j,move_i,move_j;
-        piece_i = input.first.first; piece_j = input.first.second;
-        move_i = input.second.first; move_j = input.second.second;
+        int piece_i,piece_j;
+        piece_i = input.first.first;
+        piece_j = input.first.second;
         if(board[piece_i][piece_j] == NULL){
             return false;
         }
         else return true;
+    }
+    bool movecheck(pair<pair<int,int>,pair<int,int>> input){
+        vector<pair<int,int>>::iterator ptr;
+        for(ptr = board[input.first.first][input.first.second]->valid_moves.begin(); ptr < board[input.first.first][input.first.second]->valid_moves.end(); ptr++){
+            if(*ptr == input.second){return true;}
+        }
+        return false;
+    }
+    void update_moves(){
+    /*
+        pair<int,int>temp;
+        cout << "beginning of update move\n";
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                cout << "for loop iteration: [" << i << "] [" << j << "]\n";
+                if(board[i][j] != NULL){
+                    if(board[i][j]->symbol == 'p'){
+                        if(board[i][j]->color == White){
+                            if(board[i-1][j] == NULL){ //move1
+                                temp.first = i-1; temp.second = j;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i-1][j+1] != NULL && board[i-1][j+1]->color != White){ //attack
+                                temp.first = i-1; temp.second = j+1;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i-1][j-1] != NULL && board[i-1][j-1]->color != White){ //attack
+                                temp.first = i-1; temp.second = j-1;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i-1][j] == NULL && board[i-2][j] == NULL && board[i][j]->firstmove == true){ //move2
+                                temp.first = i-2; temp.second = j;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                        }else{
+                            if(board[i+1][j] == NULL){ //move1
+                                temp.first = i+1; temp.second = j;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i+1][j+1] != NULL && board[i+1][j+1]->color != White){ //attack
+                                temp.first = i+1; temp.second = j+1;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i+1][j-1] != NULL && board[i+1][j-1]->color != White){ //attack
+                                temp.first = i+1; temp.second = j-1;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                            if(board[i+1][j] == NULL && board[i+2][j] == NULL && board[i][j]->firstmove == true){ //move2
+                                temp.first = i+2; temp.second = j;
+                                board[i][j]->valid_moves.push_back(temp);
+                            }
+                        }
+                    }
+                    else if(board[i][j]->symbol == 'B'){}                    
+                    else if(board[i][j]->symbol == 'N'){}                    
+                    else if(board[i][j]->symbol == 'C'){}
+                    else if(board[i][j]->symbol == 'Q'){}
+                    else if(board[i][j]->symbol == 'K'){}
+                    else{
+                        //cerr << "Error with piece symbol in update_moves"; exit(1);
+                    }
+                }
+            }
+        }*/
     }
 };
 struct Chess{
@@ -113,17 +180,25 @@ struct Chess{
         system("cls");
     }
     bool run(){
+        bool checkmate = false;
         Board gameboard;
         Conversion_Table ctable;
         pair<pair<int,int>,pair<int,int>>input;
         gameboard.printboard();
+        cout << "before  update move\n";
+        gameboard.update_moves();
+        cout << "afetr update move\n";
         //vLOOPv
+        //while(checkmate == false)
         //playerinput
         input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
         //piececheck
         if(gameboard.piececheck(input) == false){
             cout << "not a valid piece\n";
         };
+        if(gameboard.movecheck(input) == false){
+            cout << "not a valid move\n";
+        }
         //movecheck
         //checkcheck
         //playermove
