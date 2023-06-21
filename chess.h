@@ -22,6 +22,10 @@ struct Piece{
     int value;
     char symbol;
     bool firstmove;
+
+    virtual vector<pair<int,int>> generate_valid_moves (){
+        return vector<pair<int,int>>();
+    };
 };
 struct Pawn: public Piece{
     Pawn(){
@@ -29,11 +33,20 @@ struct Pawn: public Piece{
         symbol = 'p';
         firstmove = true;
     }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        pair<int,int> valid_move;
+        return valid_moves;
+    }
 };
 struct Bishop: public Piece{
     Bishop(){
         value = 3;
         symbol = 'B';
+    }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        return valid_moves;
     }
 };
 struct Knight: public Piece{
@@ -41,11 +54,19 @@ struct Knight: public Piece{
         value = 3;
         symbol = 'N';
     }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        return valid_moves;
+    }
 };
 struct Castle: public Piece{
     Castle(){
         value = 5;
         symbol = 'C';
+    }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        return valid_moves;
     }
 };
 struct Queen: public Piece{
@@ -53,11 +74,19 @@ struct Queen: public Piece{
         value = 8;
         symbol = 'Q'; 
     }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        return valid_moves;
+    }
 };
 struct King: public Piece{
     King(){
         value = 10;
         symbol = 'K';
+    }
+    vector<pair<int,int>> generate_valid_moves() override {
+        vector<pair<int,int>> valid_moves;
+        return valid_moves;
     }
 };
 struct Board{
@@ -84,9 +113,9 @@ struct Board{
         for(int j = 0; j < 8; j++){
             if(board[i][j] != NULL){
                 if(board[i][j]->color == Black){
-                    cout << RED << board[i][j]->symbol << RESET << " | ";
-                }else{
                     cout << BLUE << board[i][j]->symbol << RESET << " | ";
+                }else{
+                    cout << board[i][j]->symbol << " | ";
                 }
             }else{
                 cout << " " << " | ";
@@ -107,6 +136,12 @@ struct Board{
     }
     bool movecheck(pair<pair<int,int>,pair<int,int>> input){
         //TODO check if piece -> location is a valid move based on piece's valid move list
+        vector<pair<int,int>> valid_moves;
+        Piece* curPiece = board[input.first.first][input.first.second];
+        valid_moves = curPiece->generate_valid_moves();
+        for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
+            if(it->first == input.second.first && it->second == input.second.second){return true;}
+        }
         return false;
     }
     void move(pair<pair<int,int>,pair<int,int>> input){
