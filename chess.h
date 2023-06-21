@@ -1,6 +1,6 @@
 #include "chessfunctions.h"
-#define RED "\033[31m"
-#define BLUE "\033[34m"
+#define RED "\033[31m" //(white)
+#define BLUE "\033[34m" //(black)
 #define RESET "\033[0m"
 enum Team {Black, White};
 
@@ -23,7 +23,7 @@ struct Piece{
     char symbol;
     bool firstmove;
 
-    virtual vector<pair<int,int>> generate_valid_moves (){
+    virtual vector<pair<int,int>> generate_valid_moves (Piece*** board){
         return vector<pair<int,int>>();
     };
 };
@@ -33,9 +33,52 @@ struct Pawn: public Piece{
         symbol = 'p';
         firstmove = true;
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
-        pair<int,int> valid_move;
+        pair<int,int> move;
+        if(color == White){//IF WHITE
+            if(location.first-1 < 0){return valid_moves;} //at edge of board, no moves
+            if(board[location.first-1][location.second] == NULL){
+                //valid move - 1 square
+                move.first = location.first-1; move.second = location.second;
+                valid_moves.push_back(move);
+                if(location.first-2 >= 0){
+                    if(board[location.first-2][location.second] == NULL && firstmove){
+                        //valid move - 2 square
+                        move.first = location.first-2; move.second = location.second;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
+            //check if y+1 out of bounds
+            if(location.second + 1 <= 7){
+                if(board[location.first-1][location.second+1] != NULL){
+                    if(board[location.first-1][location.second+1]->color == Black){
+                        //valid move - capture right black
+                        move.first = location.first-1; move.second = location.second+1;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
+            //check if y-1 out of bounds
+            if(location.second - 1 >= 0){
+                if(board[location.first-1][location.second-1] != NULL){
+                    if(board[location.first-1][location.second-1]->color == Black){
+                     //valid move - capture left black
+                        move.first = location.first-1; move.second = location.second-1;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
+        }else{ //IF BLACK
+            if(location.first-1 < 0){return valid_moves;} //at edge of board, no moves
+        }
+        //if BLACK
+            //make sure to check if at boundary of board
+            //check if location[x+1][y] is clear -> valid move
+                //if firstmove && location[x+2][y] is clear -> valid move
+            //if location[x+1][y+1] is White piece -> valid move
+            //if location[x+1][y-1] is White piece -> valid move
         return valid_moves;
     }
 };
@@ -44,7 +87,7 @@ struct Bishop: public Piece{
         value = 3;
         symbol = 'B';
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         return valid_moves;
     }
@@ -54,7 +97,7 @@ struct Knight: public Piece{
         value = 3;
         symbol = 'N';
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         return valid_moves;
     }
@@ -64,7 +107,7 @@ struct Castle: public Piece{
         value = 5;
         symbol = 'C';
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         return valid_moves;
     }
@@ -74,7 +117,7 @@ struct Queen: public Piece{
         value = 8;
         symbol = 'Q'; 
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         return valid_moves;
     }
@@ -84,7 +127,7 @@ struct King: public Piece{
         value = 10;
         symbol = 'K';
     }
-    vector<pair<int,int>> generate_valid_moves() override {
+    vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         return valid_moves;
     }
@@ -97,10 +140,10 @@ struct Board{
         board[7][0] = new Castle; board[7][1] = new Knight; board[7][2] = new Bishop; board[7][3] = new Queen; board[7][4] = new King; board[7][5] = new Bishop; board[7][6] = new Knight; board[7][7] = new Castle;
         for(int i = 0; i < 8; i++){
             board[1][i] = new Pawn; board[6][i] = new Pawn; 
-            board[0][i]->location.first = 1; board[0][i]->location.second = i;
+            board[0][i]->location.first = 0; board[0][i]->location.second = i;
             board[1][i]->location.first = 1; board[1][i]->location.second = i;
-            board[6][i]->location.first = 1; board[6][i]->location.second = i;
-            board[7][i]->location.first = 1; board[7][i]->location.second = i;
+            board[6][i]->location.first = 6; board[6][i]->location.second = i;
+            board[7][i]->location.first = 7; board[7][i]->location.second = i;
             board[2][i] = NULL; board[3][i] = NULL; board[4][i] = NULL; board[5][i] = NULL; 
             board[0][i]->color = Black; board[1][i]->color = Black; board[6][i]->color = White; board[7][i]->color = White;
         }
@@ -115,7 +158,7 @@ struct Board{
                 if(board[i][j]->color == Black){
                     cout << BLUE << board[i][j]->symbol << RESET << " | ";
                 }else{
-                    cout << board[i][j]->symbol << " | ";
+                    cout << RED << board[i][j]->symbol << RESET << " | ";
                 }
             }else{
                 cout << " " << " | ";
@@ -134,20 +177,23 @@ struct Board{
         }
         else return true;
     }
-    bool movecheck(pair<pair<int,int>,pair<int,int>> input){
-        //TODO check if piece -> location is a valid move based on piece's valid move list
+    bool movecheck(pair<pair<int,int>,pair<int,int>> input){ //generate and check valid moves against input
         vector<pair<int,int>> valid_moves;
         Piece* curPiece = board[input.first.first][input.first.second];
-        valid_moves = curPiece->generate_valid_moves();
+        valid_moves = curPiece->generate_valid_moves(board);
         for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
-            if(it->first == input.second.first && it->second == input.second.second){return true;}
+            if(it->first == input.second.first && it->second== input.second.second){return true;}
         }
         return false;
     }
     void move(pair<pair<int,int>,pair<int,int>> input){
-        //TODO move piece at input.first to input.second
+        //move piece
         board[input.second.first][input.second.second] = board[input.first.first][input.first.second];
         board[input.first.first][input.first.second] = NULL;
+        //update piece with new coords
+        board[input.second.first][input.second.second]->location.first = input.second.first;
+        board[input.second.first][input.second.second]->location.second = input.second.second;
+        if(board[input.second.first][input.second.second]->firstmove){board[input.second.first][input.second.second]->firstmove = false;}
         return;
     }
 };
@@ -173,21 +219,17 @@ struct Chess{
         gameboard.printboard();
         //vLOOPv-----------------
         while(checkmate == false){
-            //playerinput
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
-            //piececheck
-            if(gameboard.piececheck(input) == false){
+            if(!gameboard.piececheck(input)){
                 cout << "not a valid piece\n";
                 continue;
             };
-            //movecheck
-            if(gameboard.movecheck(input) == false){
+            if(!gameboard.movecheck(input)){
                 cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
+                continue;
             }
-            //checkmatecheck
-            //playermove
+            //check/matecheck TODO
             gameboard.move(input);
-            //printboard
             gameboard.printboard();
         }
         //-------------------------
