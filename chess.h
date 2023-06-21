@@ -1,3 +1,8 @@
+//maybe I should generate every piece's valid moves each turn in order to track check/checkmates, instead of generating
+//a piece's move when selected.
+//then I can just check this list for whatever piece i choose instead of generating on the spot
+//Need to figure out how to detect a check/checkmate, and when a piece moving will result in check (making that move invalid)
+
 #include "chessfunctions.h"
 #define RED "\033[31m" //(white)
 #define BLUE "\033[34m" //(black)
@@ -70,7 +75,7 @@ struct Pawn: public Piece{
                     }
                 }
             }
-        }else{ //IF BLACK
+        }else{ //IF BLACK TODO
             if(location.first-1 < 0){return valid_moves;} //at edge of board, no moves
         }
         //if BLACK
@@ -89,6 +94,9 @@ struct Bishop: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        //loop over all 4 diagonals, adding to valid moves until a piece is blocking the path
+        //if opposing color, add blocking piece to valid moves
+        //make sure stays in bounds of board
         return valid_moves;
     }
 };
@@ -99,6 +107,10 @@ struct Knight: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        //8 possible locations
+        //check if in bounds
+        //check if piece exists (add valid move if none)
+        //if piece is opposing color (add valid move)
         return valid_moves;
     }
 };
@@ -109,6 +121,9 @@ struct Castle: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        //loop over all 4 verticals/horizontals adding to valid moves until piece is blocking the path
+        //if piece is opposing color, add it to valid moves
+        //make sure stays in bounds of board
         return valid_moves;
     }
 };
@@ -119,6 +134,9 @@ struct Queen: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        //loop over all 8 diagonals/horizontals/verticals adding to valid moves until a piece is blocking the path
+        //if piece is opposing color, add to valid moves
+        //make sure stays in bounds of board
         return valid_moves;
     }
 };
@@ -129,6 +147,8 @@ struct King: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        //check all 8 adjacent squares
+        //if clear or enemy piece, add to valid moves
         return valid_moves;
     }
 };
