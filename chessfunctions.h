@@ -2,7 +2,6 @@
 
 
 pair <pair<int,int>,pair<int,int>> convertcoords(int numtable[9],int chartable[256], pair <pair<char,int>,pair<char,int>> playerinput){
-    //chessnotation->arraynotation TODO 
 //    cout << playerinput.first.first << playerinput.first.second << " " << playerinput.second.first << playerinput.second.second << "\n";
     pair <pair<int,int>,pair<int,int>> rvalue;
     rvalue.first.first = playerinput.first.second; //num
