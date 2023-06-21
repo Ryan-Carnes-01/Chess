@@ -1,5 +1,7 @@
 #include "chessfunctions.h"
-
+#define RED "\033[31m"
+#define BLUE "\033[34m"
+#define RESET "\033[0m"
 enum Team {Black, White};
 
 struct Conversion_Table{
@@ -81,7 +83,11 @@ struct Board{
         cout << "| ";
         for(int j = 0; j < 8; j++){
             if(board[i][j] != NULL){
-                cout << board[i][j]->symbol << " | ";
+                if(board[i][j]->color == Black){
+                    cout << RED << board[i][j]->symbol << RESET << " | ";
+                }else{
+                    cout << BLUE << board[i][j]->symbol << RESET << " | ";
+                }
             }else{
                 cout << " " << " | ";
             }
@@ -101,9 +107,13 @@ struct Board{
     }
     bool movecheck(pair<pair<int,int>,pair<int,int>> input){
         //TODO check if piece -> location is a valid move based on piece's valid move list
+        return false;
     }
     void move(pair<pair<int,int>,pair<int,int>> input){
         //TODO move piece at input.first to input.second
+        board[input.second.first][input.second.second] = board[input.first.first][input.first.second];
+        board[input.first.first][input.first.second] = NULL;
+        return;
     }
 };
 struct Chess{
@@ -126,23 +136,26 @@ struct Chess{
         Conversion_Table ctable;
         pair<pair<int,int>,pair<int,int>>input;
         gameboard.printboard();
-        //vLOOPv
-        //while(checkmate == false)
-        //playerinput
-        input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
-        //piececheck
-        if(gameboard.piececheck(input) == false){
-            cout << "not a valid piece\n";
-        };
-        //movecheck
-        if(gameboard.movecheck(input) == false){
-            cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
+        //vLOOPv-----------------
+        while(checkmate == false){
+            //playerinput
+            input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
+            //piececheck
+            if(gameboard.piececheck(input) == false){
+                cout << "not a valid piece\n";
+                continue;
+            };
+            //movecheck
+            if(gameboard.movecheck(input) == false){
+                cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
+            }
+            //checkmatecheck
+            //playermove
+            gameboard.move(input);
+            //printboard
+            gameboard.printboard();
         }
-        //checkmatecheck
-        //playermove
-        gameboard.move(input);
-        //printboard
-        gameboard.printboard();
+        //-------------------------
         return false;
     }
     void printvictory(){
