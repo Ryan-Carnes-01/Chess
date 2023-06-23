@@ -327,6 +327,76 @@ struct Queen: public Piece{
         //loop over all 8 diagonals/horizontals/verticals adding to valid moves until a piece is blocking the path
         //if piece is opposing color, add to valid moves
         //make sure stays in bounds of board
+        pair<int,int> move;
+        int row = this->location.first;
+        int col = this->location.second;
+        int i = 1;
+        //horizontal/vertical checks
+        while(row+i <= 7){
+            move.second = col;
+            if(board[row+i][col] == NULL){
+                //valid move - empty square
+                move.first = row+i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col]->color != this->color){
+                //valid move - capture
+                move.first = row+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(row-i >= 0){
+            move.second = col;
+            if(board[row-i][col] == NULL){
+                //valid move - empty square
+                move.first = row-i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col]->color != this->color){
+                //valid move - capture
+                move.first = row-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(col+i <= 7){
+            move.first = row;
+            if(board[row][col+i] == NULL){
+                //valid move - empty square
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row][col+i]->color != this->color){
+                //valid move - capture
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(col-i >= 0){
+            move.first = row;
+            if(board[row][col-i] == NULL){
+                //valid move - empty square
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row][col-i]->color != this->color){
+                //valid move - capture
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }
+        //diagonal checks TODO (steal from bishop)
         return valid_moves;
     }
 };
