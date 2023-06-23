@@ -75,15 +75,40 @@ struct Pawn: public Piece{
                     }
                 }
             }
-        }else{ //IF BLACK TODO
-            if(location.first-1 < 0){return valid_moves;} //at edge of board, no moves
+        }else{ //IF BLACK
+            if(location.first+1 > 7){return valid_moves;} //at edge of board, no moves
+            if(board[location.first+1][location.second] == NULL){
+                //valid move - 1 square
+                move.first = location.first+1; move.second = location.second;
+                valid_moves.push_back(move);
+                if(location.first+2 <= 7){
+                    if(board[location.first+2][location.second] == NULL && firstmove){
+                        //valid move - 2 square
+                        move.first = location.first+2; move.second = location.second;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
+            //check if y+1 out of bounds
+            if(location.second + 1 <= 7){
+                if(board[location.first+1][location.second+1] != NULL){
+                    if(board[location.first+1][location.second+1]->color == White){
+                        //valid move - capture right white
+                        move.first = location.first+1; move.second = location.second+1;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
+            if(location.second - 1 >= 0){
+                if(board[location.first+1][location.second-1] != NULL){
+                    if(board[location.first+1][location.second-1]->color == White){
+                        //valid move - capture left white
+                        move.first = location.first+1; move.second = location.second-1;
+                        valid_moves.push_back(move);
+                    }
+                }
+            }
         }
-        //if BLACK
-            //make sure to check if at boundary of board
-            //check if location[x+1][y] is clear -> valid move
-                //if firstmove && location[x+2][y] is clear -> valid move
-            //if location[x+1][y+1] is White piece -> valid move
-            //if location[x+1][y-1] is White piece -> valid move
         return valid_moves;
     }
 };
@@ -94,9 +119,86 @@ struct Bishop: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
-        //loop over all 4 diagonals, adding to valid moves until a piece is blocking the path
-        //if opposing color, add blocking piece to valid moves
-        //make sure stays in bounds of board
+        pair<int,int> move;
+        /*cout << "Generating BISHOP moves" << endl;
+        cout << "LOCATION: " << location.first << " " << location.second << endl;
+        int x,y;
+        //down left
+        x = location.second-1, y = location.first-1;
+        while(x >= 0 && y>= 0){ 
+            if(board[x][y] == NULL){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+            }
+            else if(board[x][y]->color != this->color){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+                break;
+            }
+            else{
+                break;
+            }
+            x--; y--;
+        }
+
+        x = location.second-1, y = location.first+1;
+        while(x >= 0 && y<= 7){
+            if(board[x][y] == NULL){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+            }
+            else if(board[x][y]->color != this->color){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+                break;
+            }
+            else{
+                break;
+            }
+            x--; y++;
+        }
+
+        x = location.second+1, y = location.first-1;
+        while(x <= 7 && y >= 0){
+            if(board[x][y] == NULL){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+            }
+            else if(board[x][y]->color != this->color){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+                break;
+            }
+            else{
+                break;
+            }
+            x++; y--;
+        }
+
+        x = location.second+1, y = location.first+1;
+        while(x <= 7 && y <= 7){
+            if(board[x][y] == NULL){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+            }
+            else if(board[x][y]->color != this->color){
+                //valid move
+                move.first = y; move.second = x;
+                valid_moves.push_back(move);
+                break;
+            }
+            else{
+                break;
+            }
+            x++; y++;
+        }*/
         return valid_moves;
     }
 };
@@ -107,10 +209,110 @@ struct Knight: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
+        pair<int,int> move;
+        int row = this->location.first;
+        int col = this->location.second;
         //8 possible locations
-        //check if in bounds
-        //check if piece exists (add valid move if none)
-        //if piece is opposing color (add valid move)
+        //row+1 col+2
+        if(row+1 <= 7 && col+2 <= 7){
+            if(board[row+1][col+2] == NULL){
+                //valid move - open square
+                move.first = row+1; move.second = col+2;
+                valid_moves.push_back(move);
+            }else if(board[row+1][col+2]->color != this->color){
+                //valid move - capture
+                move.first = row+1; move.second = col+2;
+                valid_moves.push_back(move);
+            }
+        }
+        //row+2 col+1
+        if(row+2 <= 7 && col+1 <= 7){
+            if(board[row+2][col+1] == NULL){
+                //valid move - open square
+                move.first = row+2; move.second = col+1;
+                valid_moves.push_back(move);
+            }else if(board[row+2][col+1]->color != this->color){
+                //valud move - capture
+                move.first = row+2; move.second = col+1;
+                valid_moves.push_back(move);
+            }
+        }
+
+        //row-1 col+2 
+        if(row-1 >= 0 && col+2 <= 7){
+            if(board[row-1][col+2] == NULL){
+                //valid move - open square
+                move.first = row-1; move.second = col+2;
+                valid_moves.push_back(move);
+            }else if(board[row-1][col+2]->color != this->color){
+                //valid move - capture
+                move.first = row-1; move.second = col+2;
+                valid_moves.push_back(move);
+            }
+        }
+        //row+2 col-1 
+        if(row+2 <= 7 && col-1 >= 0){
+            if(board[row+2][col-1] == NULL){
+                //valid move - open square
+                move.first = row+2; move.second = col-1;
+                valid_moves.push_back(move);
+            }else if(board[row+2][col-1]->color != this->color){
+                //valud move - capture
+                move.first = row+2; move.second = col-1;
+                valid_moves.push_back(move);
+            }
+        }
+
+        //row+1 col-2 
+        if(row+1 <= 7 && col-2 >= 0){
+            if(board[row+1][col-2] == NULL){
+                //valid move - open square
+                move.first = row+1; move.second = col-2;
+                valid_moves.push_back(move);
+            }else if(board[row+1][col-2]->color != this->color){
+                //valid move - capture
+                move.first = row+1; move.second = col-2;
+                valid_moves.push_back(move);
+            }
+        }
+        //row-2 col+1 
+        if(row-2 >= 0 && col+1 <= 7){
+            if(board[row-2][col+1] == NULL){
+                //valid move - open square
+                move.first = row-2; move.second = col+1;
+                valid_moves.push_back(move);
+            }else if(board[row-2][col+1]->color != this->color){
+                //valud move - capture
+                move.first = row-2; move.second = col+1;
+                valid_moves.push_back(move);
+            }
+        }
+
+        //row-1 col-2 
+        if(row-1 >= 0 && col-2 >= 0){
+            if(board[row-1][col-2] == NULL){
+                //valid move - open square
+                move.first = row-1; move.second = col-2;
+                valid_moves.push_back(move);
+            }else if(board[row-1][col-2]->color != this->color){
+                //valid move - capture
+                move.first = row-1; move.second = col-2;
+                valid_moves.push_back(move);
+            }
+        }
+        //row-2 col-1 
+        if(row-2 >= 0 && col-1 >= 0){
+            if(board[row-2][col-1] == NULL){
+                //valid move - open square
+                move.first = row-2; move.second = col-1;
+                valid_moves.push_back(move);
+            }else if(board[row-2][col-1]->color != this->color){
+                //valud move - capture
+                move.first = row-2; move.second = col-1;
+                valid_moves.push_back(move);
+            }
+        }
+
         return valid_moves;
     }
 };
@@ -197,10 +399,17 @@ struct Board{
         }
         else return true;
     }
+    void generate_moves(){
+
+    }
     bool movecheck(pair<pair<int,int>,pair<int,int>> input){ //generate and check valid moves against input
         vector<pair<int,int>> valid_moves;
         Piece* curPiece = board[input.first.first][input.first.second];
         valid_moves = curPiece->generate_valid_moves(board);
+        cout << "VALID MOVES: " << endl;
+        for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
+            cout << it->first << " " << it->second << endl;
+        }
         for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
             if(it->first == input.second.first && it->second== input.second.second){return true;}
         }
@@ -239,6 +448,7 @@ struct Chess{
         gameboard.printboard();
         //vLOOPv-----------------
         while(checkmate == false){
+            //gameboard.generate_moves();
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
             if(!gameboard.piececheck(input)){
                 cout << "not a valid piece\n";
