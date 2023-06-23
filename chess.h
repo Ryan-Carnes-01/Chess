@@ -120,85 +120,6 @@ struct Bishop: public Piece{
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
         pair<int,int> move;
-        /*cout << "Generating BISHOP moves" << endl;
-        cout << "LOCATION: " << location.first << " " << location.second << endl;
-        int x,y;
-        //down left
-        x = location.second-1, y = location.first-1;
-        while(x >= 0 && y>= 0){ 
-            if(board[x][y] == NULL){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-            }
-            else if(board[x][y]->color != this->color){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-                break;
-            }
-            else{
-                break;
-            }
-            x--; y--;
-        }
-
-        x = location.second-1, y = location.first+1;
-        while(x >= 0 && y<= 7){
-            if(board[x][y] == NULL){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-            }
-            else if(board[x][y]->color != this->color){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-                break;
-            }
-            else{
-                break;
-            }
-            x--; y++;
-        }
-
-        x = location.second+1, y = location.first-1;
-        while(x <= 7 && y >= 0){
-            if(board[x][y] == NULL){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-            }
-            else if(board[x][y]->color != this->color){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-                break;
-            }
-            else{
-                break;
-            }
-            x++; y--;
-        }
-
-        x = location.second+1, y = location.first+1;
-        while(x <= 7 && y <= 7){
-            if(board[x][y] == NULL){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-            }
-            else if(board[x][y]->color != this->color){
-                //valid move
-                move.first = y; move.second = x;
-                valid_moves.push_back(move);
-                break;
-            }
-            else{
-                break;
-            }
-            x++; y++;
-        }*/
         return valid_moves;
     }
 };
@@ -323,9 +244,74 @@ struct Castle: public Piece{
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
-        //loop over all 4 verticals/horizontals adding to valid moves until piece is blocking the path
-        //if piece is opposing color, add it to valid moves
-        //make sure stays in bounds of board
+        pair<int,int> move;
+        int row = this->location.first;
+        int col = this->location.second;
+        int i = 1;
+        while(row+i <= 7){
+            move.second = col;
+            if(board[row+i][col] == NULL){
+                //valid move - empty square
+                move.first = row+i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col]->color != this->color){
+                //valid move - capture
+                move.first = row+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(row-i >= 0){
+            move.second = col;
+            if(board[row-i][col] == NULL){
+                //valid move - empty square
+                move.first = row-i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col]->color != this->color){
+                //valid move - capture
+                move.first = row-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(col+i <= 7){
+            move.first = row;
+            if(board[row][col+i] == NULL){
+                //valid move - empty square
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row][col+i]->color != this->color){
+                //valid move - capture
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        } i = 1;
+        while(col-i >= 0){
+            move.first = row;
+            if(board[row][col-i] == NULL){
+                //valid move - empty square
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row][col-i]->color != this->color){
+                //valid move - capture
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }
         return valid_moves;
     }
 };
