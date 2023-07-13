@@ -793,6 +793,9 @@ struct Chess{
         cout << " /_______\\  \n";
         cout << "|_________| \n";
         cout << "Welcome to Chess++, a console-based chess program made in C++\n";
+        cout << "| Red = White | Blue = Black |\n";
+        cout << "-HELP: To move pieces, simply input the location of the piece you want to move, hit enter, then input the location of your destination\n";
+        cout << "-EXAMPLE: 'e2 [Enter] e4' will move the piece at e2 to e4\n";
         system("pause");
         system("cls");
     }
@@ -803,7 +806,7 @@ struct Chess{
         Conversion_Table ctable;
         pair<pair<int,int>,pair<int,int>>input;
         gameboard.printboard();
-        cout << "Whites turn" << endl;
+        cout << "White's turn" << endl;
         //vLOOPv-----------------
         while(1){
             //detect check/mate
@@ -821,21 +824,21 @@ struct Chess{
             //restrict moves for player in check
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
             if(!gameboard.piececheck(input, turn)){
-                cout << "not a valid piece\n";
+                cout << "Not a valid piece\n";
                 continue;
             };
             if(!gameboard.movecheck(input)){
-                cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
+                cout << "Not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
                 continue;
             }
             if(gameboard.pincheck(input, turn)){
-                cout << "Move results in king being in check" << endl;
+                cout << "Not a valid move. Will result in check." << endl;
                 continue;
             }
             gameboard.move(input);
             gameboard.printboard();
-            if(turn == White){cout << "Blacks Turn" << endl; turn = Black;}
-            else{cout << "Whites turn" << endl; turn = White;}
+            if(turn == White){cout << "Black's Turn" << endl; turn = Black;}
+            else{cout << "White's turn" << endl; turn = White;}
         }
         //-------------------------
         return winner;

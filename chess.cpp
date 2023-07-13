@@ -5,7 +5,7 @@ int main(){
     Team winner;
     Game.printgreeting();
     winner = Game.run();
-    if(winner = White){
+    if(winner == White){
         cout << "White wins!" << endl;
     }else{cout << "Black wins!" << endl;}
     return 0;
