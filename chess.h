@@ -676,14 +676,17 @@ struct Board{
         cout << "\n|-------------------------------|\n";
         }
     }
-    bool piececheck(pair<pair<int,int>,pair<int,int>> input){
+    bool piececheck(pair<pair<int,int>,pair<int,int>> input, Team turn){
         int piece_i,piece_j;
         piece_i = input.first.first;
         piece_j = input.first.second;
         if(board[piece_i][piece_j] == NULL){
             return false;
         }
-        else return true;
+        if(board[piece_i][piece_j]->color != turn){
+            return false;
+        }
+        return true;
     }
     void generate_moves(){
 
@@ -692,12 +695,8 @@ struct Board{
         vector<pair<int,int>> valid_moves;
         Piece* curPiece = board[input.first.first][input.first.second];
         valid_moves = curPiece->generate_valid_moves(board);
-        cout << "VALID MOVES: " << endl;
         for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
-            cout << it->first << " " << it->second << endl;
-        }
-        for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
-            if(it->first == input.second.first && it->second== input.second.second){return true;}
+            if(it->first == input.second.first && it->second == input.second.second){return true;}
         }
         return false;
     }
@@ -728,15 +727,17 @@ struct Chess{
     }
     bool run(){
         bool checkmate = false;
+        Team turn = White;
         Board gameboard;
         Conversion_Table ctable;
         pair<pair<int,int>,pair<int,int>>input;
         gameboard.printboard();
+        cout << "Whites turn" << endl;
         //vLOOPv-----------------
         while(checkmate == false){
             //gameboard.generate_moves();
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
-            if(!gameboard.piececheck(input)){
+            if(!gameboard.piececheck(input, turn)){
                 cout << "not a valid piece\n";
                 continue;
             };
@@ -750,6 +751,8 @@ struct Chess{
             //}
             gameboard.move(input);
             gameboard.printboard();
+            if(turn == White){cout << "Blacks Turn" << endl; turn = Black;}
+            else{cout << "Whites turn" << endl; turn = White;}
         }
         //-------------------------
         return false;
