@@ -709,6 +709,25 @@ struct Board{
         }
         return false;
     }
+    bool matecheck(Team turn){
+        for (int row = 0; row < 8; ++row) {
+            for (int col = 0; col < 8; ++col) {
+                Piece* piece = board[row][col];
+                if (piece != NULL && piece->color == turn) {
+                    // Check if the piece has any legal moves to get the king out of check
+                    vector<pair<int, int>> legalMoves = piece->generate_valid_moves(board);
+                    for (const auto& move : legalMoves) {
+                       pair<pair<int, int>, pair<int, int>> input = make_pair(make_pair(row, col), move);
+                        if (!pincheck(input, turn)) {
+                            // At least one legal move found, not checkmate
+                           return false;
+                       }
+                    }
+                }
+            }
+        }
+        return true;
+    }
     bool piececheck(pair<pair<int,int>,pair<int,int>> input, Team turn){
         int piece_i,piece_j;
         piece_i = input.first.first;
@@ -731,11 +750,26 @@ struct Board{
         return false;
     }
     bool pincheck(pair<pair<int,int>,pair<int,int>> input, Team turn){ 
+        int selectedrow = input.first.first;
+        int selectedcol = input.first.second;
+        int targetrow = input.second.first;
+        int targetcol = input.second.second;
         //set pointer to target location/copy it's data
+        Piece* temp = board[targetrow][targetcol];
         //make move temporarily
+        board[targetrow][targetcol] = board[selectedrow][selectedcol];
+        board[selectedrow][selectedcol] = NULL;
+        board[targetrow][targetcol]->location.first = targetrow;
+        board[targetrow][targetcol]->location.second = targetcol;
         //call checkcheck
-        //undo move if in check
-        return false;
+        bool kingincheck = checkcheck(turn);
+        //undo move
+        board[selectedrow][selectedcol] = board[targetrow][targetcol];
+        board[targetrow][targetcol] = temp;
+        board[selectedrow][selectedcol]->location.first = selectedrow;
+        board[selectedrow][selectedcol]->location.second = selectedcol;
+
+        return kingincheck;
     }
     void move(pair<pair<int,int>,pair<int,int>> input){
         //move piece
@@ -762,8 +796,8 @@ struct Chess{
         system("pause");
         system("cls");
     }
-    bool run(){
-        bool checkmate = false;
+    Team run(){
+        Team winner;
         Team turn = White;
         Board gameboard;
         Conversion_Table ctable;
@@ -771,9 +805,16 @@ struct Chess{
         gameboard.printboard();
         cout << "Whites turn" << endl;
         //vLOOPv-----------------
-        while(checkmate == false){
+        while(1){
             //detect check/mate
             if(gameboard.checkcheck(turn)){
+                //matecheck - generate all moves for turn(color), see if any of the moves remove check
+                if(gameboard.matecheck(turn)){
+                    if(turn == White){winner = Black;}
+                    else{winner = White;}
+                    return winner;
+                    break;
+                }
                 if(turn == White){cout << "White is in check" << endl;}
                 else{cout << "Black is in check" << endl;}
             }
@@ -787,7 +828,6 @@ struct Chess{
                 cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
                 continue;
             }
-            //prevent illegal moves into check
             if(gameboard.pincheck(input, turn)){
                 cout << "Move results in king being in check" << endl;
                 continue;
@@ -798,12 +838,6 @@ struct Chess{
             else{cout << "Whites turn" << endl; turn = White;}
         }
         //-------------------------
-        return false;
-    }
-    void printvictory(){
-        cout << "You win\n";
-    }
-    void printdefeat(){
-        cout << "You lose\n";
+        return winner;
     }
 };

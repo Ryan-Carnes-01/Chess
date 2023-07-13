@@ -2,11 +2,11 @@
 
 int main(){
     Chess Game;
+    Team winner;
     Game.printgreeting();
-    if(Game.run() == true){
-        Game.printvictory();
-    }else{
-        Game.printdefeat();
-    }
+    winner = Game.run();
+    if(winner = White){
+        cout << "White wins!" << endl;
+    }else{cout << "Black wins!" << endl;}
     return 0;
 }
