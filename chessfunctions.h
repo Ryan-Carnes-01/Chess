@@ -1,22 +1,16 @@
 #include "includes.h"
-
-
 pair <pair<int,int>,pair<int,int>> convertcoords(int numtable[9],int chartable[256], pair <pair<char,int>,pair<char,int>> playerinput){
-//    cout << playerinput.first.first << playerinput.first.second << " " << playerinput.second.first << playerinput.second.second << "\n";
     pair <pair<int,int>,pair<int,int>> rvalue;
     rvalue.first.first = playerinput.first.second; //num
     rvalue.first.second = playerinput.first.first; //char
     rvalue.second.first = playerinput.second.second; //num
     rvalue.second.second = playerinput.second.first; //char
-
-//    cout << rvalue.first.first << rvalue.first.second << " " << rvalue.second.first << rvalue.second.second << "\n";
     
     rvalue.first.first = numtable[rvalue.first.first];
     rvalue.second.first = numtable[rvalue.second.first];
     rvalue.first.second = chartable[rvalue.first.second];
     rvalue.second.second = chartable[rvalue.second.second];
     //conversion table: use rvalues to index into arrays that contain wanted values
-//    cout << rvalue.first.first << rvalue.first.second << " " << rvalue.second.first << rvalue.second.second << "\n";
     return rvalue;
 }
 pair <pair<char,int>,pair<char,int>> playerinput(){

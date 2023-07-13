@@ -3,6 +3,13 @@
 //then I can just check this list for whatever piece i choose instead of generating on the spot
 //Need to figure out how to detect a check/checkmate, and when a piece moving will result in check (making that move invalid)
 
+//Detect check
+//Prevent illegal moves into check
+//Restrict moves for player in check
+//Castling L and R
+//En Passant
+//Pawn Promotion
+
 #include "chessfunctions.h"
 #define RED "\033[31m" //(white)
 #define BLUE "\033[34m" //(black)
@@ -391,7 +398,6 @@ struct Queen: public Piece{
         vector<pair<int,int>> valid_moves;
         //loop over all 8 diagonals/horizontals/verticals adding to valid moves until a piece is blocking the path
         //if piece is opposing color, add to valid moves
-        //make sure stays in bounds of board
         pair<int,int> move;
         int row = this->location.first;
         int col = this->location.second;
@@ -676,6 +682,33 @@ struct Board{
         cout << "\n|-------------------------------|\n";
         }
     }
+    bool checkcheck(Team turn){
+        pair<int,int> kingcoords;
+        vector<vector<pair<int,int>>> valid_moves;
+        //get coords of turn-colored king & generate all possible moves for non turn-colored pieces
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if(board[i][j] != NULL){
+                    if(board[i][j]->color == turn && board[i][j]->value == 10){
+                        kingcoords.first = i;
+                        kingcoords.second = j;
+                    }
+                    if(board[i][j]->color != turn){valid_moves.push_back(board[i][j]->generate_valid_moves(board));}
+                }
+            }
+        }
+        //if king coords match any of these moves return true
+        for(auto it1 = valid_moves.begin(); it1 != valid_moves.end(); it1++){
+            vector<pair<int,int>>& piece_moves = *it1;
+            for(auto it2 = piece_moves.begin(); it2 != piece_moves.end(); it2++){
+                pair<int,int> move = *it2;
+                if(move.first == kingcoords.first && move.second == kingcoords.second){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     bool piececheck(pair<pair<int,int>,pair<int,int>> input, Team turn){
         int piece_i,piece_j;
         piece_i = input.first.first;
@@ -688,9 +721,6 @@ struct Board{
         }
         return true;
     }
-    void generate_moves(){
-
-    }
     bool movecheck(pair<pair<int,int>,pair<int,int>> input){ //generate and check valid moves against input
         vector<pair<int,int>> valid_moves;
         Piece* curPiece = board[input.first.first][input.first.second];
@@ -698,6 +728,13 @@ struct Board{
         for(auto it = valid_moves.begin(); it != valid_moves.end(); it++){
             if(it->first == input.second.first && it->second == input.second.second){return true;}
         }
+        return false;
+    }
+    bool pincheck(pair<pair<int,int>,pair<int,int>> input, Team turn){ 
+        //set pointer to target location/copy it's data
+        //make move temporarily
+        //call checkcheck
+        //undo move if in check
         return false;
     }
     void move(pair<pair<int,int>,pair<int,int>> input){
@@ -735,7 +772,12 @@ struct Chess{
         cout << "Whites turn" << endl;
         //vLOOPv-----------------
         while(checkmate == false){
-            //gameboard.generate_moves();
+            //detect check/mate
+            if(gameboard.checkcheck(turn)){
+                if(turn == White){cout << "White is in check" << endl;}
+                else{cout << "Black is in check" << endl;}
+            }
+            //restrict moves for player in check
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
             if(!gameboard.piececheck(input, turn)){
                 cout << "not a valid piece\n";
@@ -745,10 +787,11 @@ struct Chess{
                 cout << "not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
                 continue;
             }
-            //if(!gameboard.checkcheck(input)){
-                //cout << "move will put king in check" << endl;
-                //continue;
-            //}
+            //prevent illegal moves into check
+            if(gameboard.pincheck(input, turn)){
+                cout << "Move results in king being in check" << endl;
+                continue;
+            }
             gameboard.move(input);
             gameboard.printboard();
             if(turn == White){cout << "Blacks Turn" << endl; turn = Black;}
