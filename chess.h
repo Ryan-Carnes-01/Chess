@@ -122,6 +122,71 @@ struct Bishop: public Piece{
         pair<int,int> move;
         int row = this->location.first;
         int col = this->location.second;
+        int i = 1;
+        //row+1 col+1
+        while(row+i <= 7 && col+i <= 7){
+            if(board[row+i][col+i] == NULL){ //valid move - empty square
+                move.first = row+i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col+i]->color != this->color){ //valid move - capture
+                move.first = row+i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row+1 col-1
+        while(row+i <= 7 && col-i >= 0){
+            if(board[row+i][col-i] == NULL){
+                move.first = row+i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col-i]->color != this->color){
+                move.first = row+i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row-1 col+1
+        while(row-i >= 0 && col+i <= 7){
+            if(board[row-i][col+i] == NULL){
+                move.first = row-i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col+i]->color != this->color){
+                move.first = row-i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row-1 col-1
+        while(row-i >= 0 && col-i >= 0){
+            if(board[row-i][col-i] == NULL){
+                move.first = row-i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col-i]->color != this->color){
+                move.first = row-i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }
         return valid_moves;
     }
 };
@@ -395,8 +460,72 @@ struct Queen: public Piece{
                 break;
             }
             i++;
+        } i = 1;
+        //diagonal checks
+        //row+1 col+1
+        while(row+i <= 7 && col+i <= 7){
+            if(board[row+i][col+i] == NULL){ //valid move - empty square
+                move.first = row+i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col+i]->color != this->color){ //valid move - capture
+                move.first = row+i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row+1 col-1
+        while(row+i <= 7 && col-i >= 0){
+            if(board[row+i][col-i] == NULL){
+                move.first = row+i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row+i][col-i]->color != this->color){
+                move.first = row+i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row-1 col+1
+        while(row-i >= 0 && col+i <= 7){
+            if(board[row-i][col+i] == NULL){
+                move.first = row-i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col+i]->color != this->color){
+                move.first = row-i;
+                move.second = col+i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
+        }i = 1;
+        //row-1 col-1
+        while(row-i >= 0 && col-i >= 0){
+            if(board[row-i][col-i] == NULL){
+                move.first = row-i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+            }else if(board[row-i][col-i]->color != this->color){
+                move.first = row-i;
+                move.second = col-i;
+                valid_moves.push_back(move);
+                break;
+            }else{
+                break;
+            }
+            i++;
         }
-        //diagonal checks TODO (steal from bishop)
         return valid_moves;
     }
 };
