@@ -710,14 +710,14 @@ struct Board{
         return false;
     }
     bool matecheck(Team turn){
-        for (int row = 0; row < 8; ++row) {
-            for (int col = 0; col < 8; ++col) {
-                Piece* piece = board[row][col];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece* piece = board[i][j];
                 if (piece != NULL && piece->color == turn) {
                     // Check if the piece has any legal moves to get the king out of check
                     vector<pair<int, int>> legalMoves = piece->generate_valid_moves(board);
                     for (const auto& move : legalMoves) {
-                       pair<pair<int, int>, pair<int, int>> input = make_pair(make_pair(row, col), move);
+                        pair<pair<int, int>, pair<int, int>> input = make_pair(make_pair(i, j), move);
                         if (!pincheck(input, turn)) {
                             // At least one legal move found, not checkmate
                            return false;
