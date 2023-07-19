@@ -768,9 +768,30 @@ struct Board{
 
         return kingincheck;
     }
-    void move(pair<pair<int,int>,pair<int,int>> input){
+    void move(pair<pair<int,int>,pair<int,int>> input, char promotedPiece){
         //move piece
-        board[input.second.first][input.second.second] = board[input.first.first][input.first.second];
+    board[input.second.first][input.second.second] = board[input.first.first][input.first.second];
+    if(board[input.second.first][input.second.second]->symbol == 'p' && (input.second.first == 0 || input.second.first == 7)){
+        switch (promotedPiece) {
+            case 'Q':  // Queen
+                board[input.second.first][input.second.second] = new Queen;
+                break;
+            case 'B':  // Bishop
+                board[input.second.first][input.second.second] = new Bishop;
+                break;
+            case 'N':  // Knight
+                board[input.second.first][input.second.second] = new Knight;
+                break;
+            case 'R':  // Rook
+                board[input.second.first][input.second.second] = new Castle;
+                break;
+            default:
+                break;
+        }
+        // Set the color and location of the promoted piece
+        board[input.second.first][input.second.second]->color = board[input.first.first][input.first.second]->color;
+        board[input.second.first][input.second.second]->location = input.second;
+    }
         board[input.first.first][input.first.second] = NULL;
         //update piece with new coords
         board[input.second.first][input.second.second]->location.first = input.second.first;
@@ -820,19 +841,28 @@ struct Chess{
             }
             //restrict moves for player in check
             input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
-            if(!gameboard.piececheck(input, turn)){
-                cout << "Not a valid piece\n";
-                continue;
-            };
-            if(!gameboard.movecheck(input)){
-                cout << "Not a valid move. Invalid destination, blocked by another piece, or does not conform to piece's movement rules\n";
+            char promotedPiece = '\0';
+            if(gameboard.piececheck(input, turn)){
+                if(gameboard.movecheck(input)){
+                    if(!gameboard.pincheck(input,turn)){
+                        if(gameboard.board[input.first.first][input.first.second]->symbol == 'p' &&
+                        (input.second.first == 0 || input.second.first == 7)){
+                            cout << "Enter the promoted piece type (Q,B,N,R): ";
+                            cin >> promotedPiece;
+                        }
+                        gameboard.move(input,promotedPiece);
+                    }else{
+                        cout <<"move will put king in check" << endl;
+                        continue;
+                    }
+                }else{
+                    cout << "invalid move" << endl;
+                    continue;
+                }
+            }else{
+                cout << "invalid piece" << endl;
                 continue;
             }
-            if(gameboard.pincheck(input, turn)){
-                cout << "Not a valid move. Will result in check." << endl;
-                continue;
-            }
-            gameboard.move(input);
             gameboard.printboard();
             if(turn == White){cout << "Black's Turn" << endl; turn = Black;}
             else{cout << "White's turn" << endl; turn = White;}
