@@ -32,7 +32,7 @@ struct Piece{
     char symbol;
     bool firstmove;
 
-    virtual vector<pair<int,int>> generate_valid_moves (Piece*** board){
+    virtual vector<pair<int,int>> generate_valid_moves (Piece***){
         return vector<pair<int,int>>();
     };
 };
