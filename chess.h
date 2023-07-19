@@ -3,9 +3,6 @@
 //then I can just check this list for whatever piece i choose instead of generating on the spot
 //Need to figure out how to detect a check/checkmate, and when a piece moving will result in check (making that move invalid)
 
-//Detect check
-//Prevent illegal moves into check
-//Restrict moves for player in check
 //Castling L and R
 //En Passant
 //Pawn Promotion
@@ -782,7 +779,7 @@ struct Board{
         return;
     }
 };
-struct Chess{
+struct Chess{ 
     void printgreeting(){
         cout << " _   _   _  \n";
         cout << "| \\ / \\ / | \n";
