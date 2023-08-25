@@ -14,13 +14,19 @@ pair <pair<int,int>,pair<int,int>> convertcoords(int numtable[9],int chartable[2
     return rvalue;
 }
 pair <pair<char,int>,pair<char,int>> playerinput(){
-    pair <pair<char,int>, pair<char,int>> rvalue;
+    //REDO this function. Take in a string and parse it instead of directly inputting coords
+    pair <pair<char,int>, pair<char,int>> retvalue;
     pair<char,int> piece_coords;
     pair<char,int> move_coords;
     cin >> piece_coords.first >> piece_coords.second;
     cout << "--to->\n";
     cin >> move_coords.first >> move_coords.second;
     cout << piece_coords.first << piece_coords.second << "->" << move_coords.first << move_coords.second << '\n';
-    rvalue.first = piece_coords; rvalue.second = move_coords;
-    return rvalue;
+    retvalue.first = piece_coords; retvalue.second = move_coords;
+    return retvalue;
+}
+
+int parse(string input){
+
+    return 0;
 }
