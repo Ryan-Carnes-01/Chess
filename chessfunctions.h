@@ -1,23 +1,20 @@
 #include "includes.h"
-pair <pair<int,int>,pair<int,int>> convertcoords(int numtable[9],int chartable[256], pair <pair<char,int>,pair<char,int>> playerinput){
+pair <pair<int,int>,pair<int,int>> convertcoords(int numtable[9],int chartable[256], pair <pair<unsigned char,int>,pair<unsigned char,int>> playerinput){
     pair <pair<int,int>,pair<int,int>> rvalue;
-    rvalue.first.first = playerinput.first.second; //num
-    rvalue.first.second = playerinput.first.first; //char
-    rvalue.second.first = playerinput.second.second; //num
-    rvalue.second.second = playerinput.second.first; //char
+
+    rvalue.first.first = numtable[playerinput.first.second];
+    rvalue.second.first = numtable[playerinput.second.second];
+    rvalue.first.second = chartable[playerinput.first.first];
+    rvalue.second.second = chartable[playerinput.second.first];
     
-    rvalue.first.first = numtable[rvalue.first.first];
-    rvalue.second.first = numtable[rvalue.second.first];
-    rvalue.first.second = chartable[rvalue.first.second];
-    rvalue.second.second = chartable[rvalue.second.second];
-    //conversion table: use rvalues to index into arrays that contain wanted values
+    //conversion table: use playerinput to index into arrays that contain wanted values
     return rvalue;
 }
-pair <pair<char,int>,pair<char,int>> playerinput(){
+pair <pair<unsigned char,int>,pair<unsigned char,int>> playerinput(){
     //REDO this function. Take in a string and parse it instead of directly inputting coords
-    pair <pair<char,int>, pair<char,int>> retvalue;
-    pair<char,int> piece_coords;
-    pair<char,int> move_coords;
+    pair <pair<unsigned char,int>, pair<unsigned char,int>> retvalue;
+    pair<unsigned char,int> piece_coords;
+    pair<unsigned char,int> move_coords;
     cin >> piece_coords.first >> piece_coords.second;
     cout << "--to->\n";
     cin >> move_coords.first >> move_coords.second;
