@@ -312,6 +312,7 @@ struct Castle: public Piece{
     Castle(){
         value = 5;
         symbol = 'C';
+        firstmove = true;
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
         vector<pair<int,int>> valid_moves;
@@ -536,8 +537,10 @@ struct King: public Piece{
     King(){
         value = 10;
         symbol = 'K';
+        firstmove = true;
     }
     vector<pair<int,int>> generate_valid_moves(Piece*** board) override {
+        //TODO make this also check and generate possible castling options as valid moves
         vector<pair<int,int>> valid_moves;
         pair<int,int> move;
         int row = this->location.first;
@@ -812,8 +815,7 @@ struct Chess{
         cout << "|_________| \n";
         cout << "Welcome to Chess++, a console-based chess program made in C++\n";
         cout << "| Red = White | Blue = Black |\n";
-        cout << "-HELP: To move pieces, simply input the location of the piece you want to move, hit enter, then input the location of your destination\n";
-        cout << "-EXAMPLE: 'e2 [Enter] e4' will move the piece at e2 to e4\n";
+        cout << "Type 'help' to learn how to input moves" << endl;
         system("pause");
         system("cls");
     }
@@ -822,14 +824,13 @@ struct Chess{
         Team turn = White;
         Board gameboard;
         Conversion_Table ctable;
-        pair<pair<int,int>,pair<int,int>>input;
+        pair<pair<int,int>,pair<int,int>>input,rawinput;
         gameboard.printboard();
         cout << "White's turn" << endl;
         //vLOOPv-----------------
         while(1){
             //detect check/mate
             if(gameboard.checkcheck(turn)){
-                //matecheck - generate all moves for turn(color), see if any of the moves remove check
                 if(gameboard.matecheck(turn)){
                     if(turn == White){winner = Black;}
                     else{winner = White;}
@@ -839,8 +840,36 @@ struct Chess{
                 if(turn == White){cout << "White is in check" << endl;}
                 else{cout << "Black is in check" << endl;}
             }
-            //restrict moves for player in check
-            input = convertcoords(ctable.numtable, ctable.chartable, playerinput());
+            //input
+            rawinput = playerinput();
+            if(rawinput.first.second == -1 && rawinput.second.second == -1){ //input is not a move
+                char option = rawinput.first.first;
+                if(option == 'z'){ //help message/invalid input/not a move
+                    continue;
+                }
+                else if(option == 'k'){//castle kingside
+                    if(turn == White){
+                        //check that white king position has white king && firstmove
+                        //check that white Krook position has white Krook && firstmove
+                    }else{
+                        //check that black king position has black king && firstmove
+                        //check that white Krook position has white Krook && firstmove
+                    }
+                    continue;
+                }
+                else if(option == 'q'){
+                    if(turn == White){
+                        //check that white king position has white king && firstmove
+                        //check that white Qrook position has white Qrook && firstmove
+                    }else{
+                        //check that black king position has black king && firstmove
+                        //check that black Qrook position has black Qrook && firstmove
+                    }
+                    continue;
+                }
+            }
+            input = convertcoords(ctable.numtable, ctable.chartable, rawinput);
+
             char promotedPiece = '\0';
             if(gameboard.piececheck(input, turn)){
                 if(gameboard.movecheck(input)){
